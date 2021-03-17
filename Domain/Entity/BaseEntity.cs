@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entity
 {
-  public class BaseEntity
+  public abstract class BaseEntity
   {
-    public Guid Id { get; set; }
+    public Guid Id { get; }
     [NotMapped]
     public bool Valid { get; private set; }
     [NotMapped]
