@@ -1,11 +1,10 @@
-using System;
 using Domain.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infraestructure.Mappings
 {
-  public class ProductMapping : IEntityTypeConfiguration<Domain.Entity.Product>
+  public class ProductMapping : IEntityTypeConfiguration<Product>
   {
     public void Configure(EntityTypeBuilder<Product> builder)
     {
