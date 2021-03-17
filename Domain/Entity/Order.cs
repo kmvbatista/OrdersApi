@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Domain.Enums;
 
 namespace Domain.Entity
@@ -9,9 +10,11 @@ namespace Domain.Entity
     private OrderStatus Status { get; set; }
     private DateTime OrderDate { get; }
     private double _totalPrice;
+    public virtual IList<Product> Products { get; set; }
     public double TotalPrice
     {
-      get => _totalPrice; set
+      get => _totalPrice;
+      set
       {
         if (value > 0)
           _totalPrice = value;
