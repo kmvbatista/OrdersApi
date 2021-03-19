@@ -1,3 +1,6 @@
 obj
 bin
 *template*
+*appsettings.json*
+*/appsettings.json
+ApiEntryPoint/appsettings.json
