@@ -51,10 +51,8 @@ namespace Infra.Repositories.GenericRepository
 
     public async Task<bool> ValidateEntityExistence(Guid entityId)
     {
-      var entityExists = await _dbContext.Set<TEntity>().AnyAsync(x => x.Id == entityId);
-      if (!entityExists)
-        return false;
-      return true;
+      bool entityExists = await _dbContext.Set<TEntity>().AnyAsync(x => x.Id == entityId);
+      return entityExists;
     }
   }
 }
