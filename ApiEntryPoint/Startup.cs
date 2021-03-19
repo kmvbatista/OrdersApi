@@ -26,7 +26,8 @@ namespace PloomesChallenge
 
     public virtual void ConfigureDatabaseServices(IServiceCollection services)
     {
-      services.AddDbContext<MainContext>();
+      string connectionString = Configuration.GetConnectionString("DefaultConnection");
+      services.AddDbContext<MainContext>(opt => opt.UseSqlServer(connectionString));
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
