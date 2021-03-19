@@ -11,9 +11,13 @@ namespace Infraestructure.Mappings
   {
     public void Configure(EntityTypeBuilder<Customer> builder)
     {
-      builder.Property(p => p.Name).HasColumnName(nameof(Customer.Name)).IsRequired();
-      builder.Property(p => p.Document.Value).HasConversion(stringStored => SetDocumentValue(stringStored), document => document.ToString())
-      .HasColumnName(nameof(Customer.Document)).IsRequired();
+      builder.HasMany<Order>(c => c.Orders)
+        .WithOne(p => p.Customer).HasForeignKey(p => p.CustomerId);
+      builder.Property(p => p.Name)
+        .HasColumnName(nameof(Customer.Name)).IsRequired();
+      builder.Property(p => p.Document)
+        .HasConversion(document => document.ToString(), stringStored => SetDocumentValue(stringStored))
+        .HasColumnName(nameof(Customer.Document)).IsRequired();
     }
 
     private Document SetDocumentValue(string value)

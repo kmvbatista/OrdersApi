@@ -2,9 +2,19 @@ using Domain.Enums;
 
 namespace Domain.ValueObjects
 {
-  public class Document
+  public struct Document
   {
-    public string Value { get; set; }
+    public Document(string value, DocumentType type)
+    {
+      _value = value;
+      Type = type;
+    }
+    private string _value;
     public DocumentType Type { get; set; }
+
+    public override string ToString()
+    {
+      return _value;
+    }
   }
 }

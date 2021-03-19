@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+
   <ItemGroup>
-    <ProjectReference Include="..\Infraestructure\Infraestructure.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
+
 
   <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>

@@ -6,9 +6,10 @@ namespace Domain.Entity
 {
   public class Order : BaseEntity
   {
-    private Guid CustomerId { get; }
-    private OrderStatus Status { get; set; }
-    private DateTime OrderDate { get; }
+    public Guid CustomerId { get; }
+    public virtual Customer Customer { get; }
+    public OrderStatus Status { get; set; }
+    public DateTime OrderDate { get; }
     private double _totalPrice;
     public virtual IList<Product> Products { get; set; }
     public double TotalPrice

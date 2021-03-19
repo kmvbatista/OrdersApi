@@ -2,8 +2,10 @@ using System;
 
 namespace Domain.Entity
 {
-  public class Product
+  public class Product : BaseEntity
   {
+    public Guid OrderId { get; set; }
+    public virtual Order Order { get; set; }
     public String Name { get; set; }
     public String Description { get; set; }
     private double _price;

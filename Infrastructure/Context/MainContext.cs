@@ -1,9 +1,10 @@
+using Domain.RepositoryContracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Context
 {
-    public class MainContext
-      : DbContext
+  public class MainContext
+    : DbContext
   {
     public MainContext(DbContextOptions options)
         : base(options)
