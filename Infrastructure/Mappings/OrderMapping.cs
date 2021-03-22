@@ -9,10 +9,13 @@ namespace Infraestructure.Mappings
     public void Configure(EntityTypeBuilder<Order> builder)
     {
       builder.HasMany<Product>(o => o.Products)
-        .WithOne(p => p.Order).HasForeignKey(p => p.OrderId);
+        .WithOne(o => o.Order).HasForeignKey(o => o.OrderId);
       builder.HasOne<Customer>(o => o.Customer).WithMany(c => c.Orders);
-      builder.Property(p => p.TotalPrice)
+      builder.Property(o => o.TotalPrice)
         .HasColumnName(nameof(Order.TotalPrice)).IsRequired();
+      builder.Property(o => o.IsActive)
+        .HasColumnName(nameof(Order.IsActive)).IsRequired();
+
     }
   }
 }

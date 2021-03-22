@@ -8,6 +8,7 @@ namespace Domain.Entity
   public abstract class BaseEntity
   {
     public Guid Id { get; protected set; }
+    public bool IsActive { get; protected set; }
     [NotMapped]
     public bool Valid { get; private set; }
     [NotMapped]

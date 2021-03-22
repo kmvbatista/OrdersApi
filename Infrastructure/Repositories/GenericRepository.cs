@@ -24,7 +24,7 @@ namespace Infra.Repositories.GenericRepository
       await _dbContext.SaveChangesAsync();
     }
 
-    public async Task Delete(Guid id)
+    public async Task Deactivate(Guid id)
     {
       var entity = await GetById(id);
       _dbContext.Set<TEntity>().Remove(entity);

@@ -12,6 +12,6 @@ namespace Domain.RepositoryContracts
     Task<TEntity> GetById(Guid id);
     Task Create(TEntity entity);
     Task Update(TEntity entity);
-    Task Delete(Guid id);
+    Task Deactivate(Guid id);
   }
 }
