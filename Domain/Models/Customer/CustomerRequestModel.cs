@@ -1,13 +1,6 @@
-using System;
-using Domain.Enums;
-
-namespace Domain.Models.Customer
+namespace Domain.Models.CustomerModels
 {
-  public class CustomerRequestModel
+  public class CustomerRequestModel : CustomerModel, IRequestModel
   {
-    public Guid Id { get; set; }
-    public string Name { get; set; }
-    public string Document { get; set; }
-    public DocumentType DocumentType { get; set; }
   }
 }
