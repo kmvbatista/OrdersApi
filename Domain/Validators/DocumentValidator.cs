@@ -21,7 +21,7 @@ namespace Domain.Validators
 
     private bool IsCNPJValid(string cnpj)
     {
-      return new CnpjValidator(cnpj).IsValid();
+      return new CpfValidator(cnpj).IsValid();
     }
 
     private bool IsCPFValid(string cpf)

@@ -18,13 +18,12 @@ namespace Domain.Validators.DocumentValidators
     public bool IsValid()
     {
       return Regex.IsMatch(Cpf, @"^(\d{3}){2}\d{3}\d{2}$") && AreCpfDigitsValid();
-
     }
 
     private bool AreCpfDigitsValid()
     {
-      return AreDigitsTheSame() && AreValidationDigitsCorrect();
-
+      return !AreDigitsTheSame() &&
+               AreValidationDigitsCorrect();
     }
 
     private bool AreDigitsTheSame()
@@ -34,24 +33,22 @@ namespace Domain.Validators.DocumentValidators
 
     private bool AreValidationDigitsCorrect()
     {
-      if (IsFirstValidationNumberEqualToSecondToLast())
-        return false;
-      return IsSecondValidationNumberEqualToLast();
+      return IsFirstValidationNumberEqualToSecondToLast() &&
+              IsSecondValidationNumberEqualToLast();
     }
 
-    private int GetValidationDigit(bool getSecondDigit = true)
+    private bool IsFirstValidationNumberEqualToSecondToLast()
     {
-      int blockSum = getSecondDigit ? GetBlockSumForFirstDigit() : GetBlockSumForSecondDigit();
-      return GetValidationDigitFromBlockSum(blockSum);
+      int firstValidationDigit = GetValidationDigit();
+      return firstValidationDigit != Cpf[Cpf.Length - 2];
     }
-    private int GetValidationDigitFromBlockSum(int blockSum)
+
+    private bool IsSecondValidationNumberEqualToLast()
     {
-      int numberToDivide = Cpf.Length;
-      int divisionRest = blockSum % numberToDivide;
-      if (divisionRest == 0 || divisionRest == 1)
-        return 0;
-      return numberToDivide - divisionRest;
+      int secondValidationDigit = GetValidationDigit(getSecondDigit: true);
+      return secondValidationDigit != Cpf[Cpf.Length - 1];
     }
+
 
     private int GetBlockSumForFirstDigit()
     {
@@ -74,16 +71,18 @@ namespace Domain.Validators.DocumentValidators
       return digitsSum;
     }
 
-    private bool IsFirstValidationNumberEqualToSecondToLast()
+    private int GetValidationDigit(bool getSecondDigit = false)
     {
-      int firstValidationDigit = GetValidationDigit();
-      return firstValidationDigit != Cpf[Cpf.Length - 2];
+      int blockSum = getSecondDigit ? GetBlockSumForSecondDigit() : GetBlockSumForFirstDigit();
+      return GetValidationDigitFromBlockSum(blockSum);
     }
-
-    private bool IsSecondValidationNumberEqualToLast()
+    private int GetValidationDigitFromBlockSum(int blockSum)
     {
-      int secondValidationDigit = GetValidationDigit(getSecondDigit: true);
-      return secondValidationDigit != Cpf[Cpf.Length - 1];
+      int numberToDivide = Cpf.Length;
+      int divisionRest = blockSum % numberToDivide;
+      if (divisionRest == 0 || divisionRest == 1)
+        return 0;
+      return numberToDivide - divisionRest;
     }
   }
 }
