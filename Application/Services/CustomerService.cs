@@ -1,9 +1,12 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Interfaces;
 using Domain.DomainNotifications;
-using Domain.Models.Customer;
+using Domain.Entity;
+using Domain.Models.CustomerMappers;
+using Domain.Models.CustomerModels;
 using Domain.RepositoryContracts;
 
 namespace Application.Services
@@ -12,40 +15,61 @@ namespace Application.Services
   {
     private ICustomerRepository _customerRepository;
     private INotificationService _notificationService;
+    private CustomerMapper _customerMapper;
 
     public CustomerService(ICustomerRepository customerRepository, INotificationService notificationService)
     {
       _customerRepository = customerRepository;
       _notificationService = notificationService;
-    }
-    public Task Create(CustomerRequestModel request)
-    {
-      throw new NotImplementedException();
+      _customerMapper = new CustomerMapper();
     }
 
-    public Task Deactivate(Guid id)
+    public async Task Create(CustomerRequestModel requestModel)
     {
-      throw new NotImplementedException();
+      Customer customer = MapCustomerFromRequestModel(requestModel);
+      if (!_notificationService.IsEntityValid(customer))
+        return;
+      await _customerRepository.Create(customer);
     }
 
-    public Task<IList<CustomerResponseModel>> GetAll()
+    public async Task Deactivate(Guid id)
     {
-      throw new NotImplementedException();
+      if (_notificationService.IsGuidValid(id))
+        return;
+      await _customerRepository.Deactivate(id);
     }
 
-    public Task<CustomerResponseModel> GetById(Guid id)
+    public async Task<IEnumerable<CustomerResponseModel>> GetAll()
     {
-      throw new NotImplementedException();
+      var customers = await _customerRepository.GetAll();
+      var customersResponseModel = customers.Select(MapCustomerToResponseModel);
+      return customersResponseModel;
     }
 
-    public Task Update(Guid id, CustomerRequestModel request)
+    public async Task<CustomerResponseModel> GetById(Guid id)
     {
-      throw new NotImplementedException();
+      if (_notificationService.IsGuidValid(id))
+        return null;
+      var customer = await _customerRepository.GetById(id);
+      return MapCustomerToResponseModel(customer);
     }
 
-    public Task ValidateEntityExistence(Guid entityId)
+    public async Task Update(Guid id, CustomerRequestModel customerRequestModel)
     {
-      throw new NotImplementedException();
+      if (!_notificationService.IsGuidValid(id))
+        return;
+      var customerToUpdate = await _customerRepository.GetById(id);
+      customerToUpdate.Update(customerRequestModel);
+      if (!_notificationService.IsEntityValid(customerToUpdate))
+        return;
+      await _customerRepository.Update(customerToUpdate);
     }
+
+    public Customer MapCustomerFromRequestModel(CustomerRequestModel customer) =>
+      _customerMapper.MapFromRequestModel(customer);
+
+    public CustomerResponseModel MapCustomerToResponseModel(Customer customer) =>
+      _customerMapper.MapToResponseModel(customer);
+
   }
 }
