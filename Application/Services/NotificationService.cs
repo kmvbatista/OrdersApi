@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using FluentValidation.Results;
 using Domain.DomainNotifications;
+using Domain.Entity;
+using System;
 
 namespace Application.Services.NotificationService
 {
@@ -30,6 +32,27 @@ namespace Application.Services.NotificationService
     public IReadOnlyCollection<Notification> GetNotifications()
     {
       return _notificationContext.Notifications;
+    }
+
+    public bool IsEntityValid(BaseEntity entity)
+    {
+      entity.Validate();
+      if (!entity.IsValid)
+      {
+        this.AddEntityNotifications(entity.ValidationResult);
+        return false;
+      }
+      return true;
+    }
+
+    public bool IsGuidValid(Guid guid)
+    {
+      if (guid == Guid.Empty || guid == null)
+      {
+        this.AddNotification("idInvalido", "O id informado está inválido: " + guid.ToString());
+        return false;
+      }
+      return true;
     }
   }
 }

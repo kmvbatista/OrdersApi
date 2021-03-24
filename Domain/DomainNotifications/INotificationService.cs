@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Domain.Entity;
 
 namespace Domain.DomainNotifications
 {
@@ -9,5 +10,7 @@ namespace Domain.DomainNotifications
     void AddEntityNotifications(FluentValidation.Results.ValidationResult validationResult);
     bool HasNotifications();
     IReadOnlyCollection<Notification> GetNotifications();
+    bool IsEntityValid(BaseEntity entity);
+    bool IsGuidValid(Guid guid);
   }
 }

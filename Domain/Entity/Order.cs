@@ -22,5 +22,9 @@ namespace Domain.Entity
       }
     }
 
+    public override void Validate()
+    {
+      ValidateFromSubClass(this);
+    }
   }
 }

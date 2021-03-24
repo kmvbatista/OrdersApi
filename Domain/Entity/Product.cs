@@ -28,5 +28,10 @@ namespace Domain.Entity
           _price = value;
       }
     }
+
+    public override void Validate()
+    {
+      ValidateFromSubClass(this);
+    }
   }
 }
