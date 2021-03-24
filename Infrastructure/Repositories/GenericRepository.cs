@@ -11,7 +11,7 @@ namespace Infra.Repositories.GenericRepository
   public abstract class GenericRepository<TEntity>
       : IGenericRepository<TEntity> where TEntity : BaseEntity
   {
-    public readonly MainContext _dbContext;
+    protected readonly MainContext _dbContext;
 
     public GenericRepository(MainContext dbContext)
     {
@@ -27,16 +27,16 @@ namespace Infra.Repositories.GenericRepository
     public async Task Deactivate(Guid id)
     {
       var entity = await GetById(id);
-      _dbContext.Set<TEntity>().Remove(entity);
-      await _dbContext.SaveChangesAsync();
+      entity.Deactivate();
+      await Update(entity);
     }
 
-    public virtual async Task<IList<TEntity>> GetAll()
+    public async Task<IList<TEntity>> GetAll()
     {
       return await _dbContext.Set<TEntity>().ToListAsync();
     }
 
-    public virtual async Task<TEntity> GetById(Guid id)
+    public async Task<TEntity> GetById(Guid id)
     {
       return await _dbContext.Set<TEntity>()
           .AsNoTracking()

@@ -23,7 +23,7 @@ namespace ApiEntryPoint.Filters
         context.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
         context.HttpContext.Response.ContentType = "application/json";
 
-        var notifications = JsonObject JsonConvert.SerializeObject(_notificationContext.Notifications);
+        var notifications = JsonConvert.SerializeObject(_notificationContext.Notifications);
         await context.HttpContext.Response.WriteAsync(notifications);
 
         return;

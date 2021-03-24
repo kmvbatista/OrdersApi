@@ -1,4 +1,3 @@
-using Domain.RepositoryContracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Context
