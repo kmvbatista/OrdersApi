@@ -1,3 +1,4 @@
+using Domain.Utils;
 using FluentValidation;
 using FluentValidation.Results;
 using System;
@@ -8,18 +9,32 @@ namespace Domain.Entity
   public abstract class BaseEntity
   {
     public Guid Id { get; protected set; }
-    public bool IsActive { get; protected set; }
+    public bool IsActive { get; private set; } = true;
     [NotMapped]
-    public bool Valid { get; private set; }
-    [NotMapped]
-    public bool Invalid => !Valid;
+    public bool IsValid { get; private set; }
     [NotMapped]
     public ValidationResult ValidationResult { get; private set; }
 
-    public bool Validate<TModel>(TModel model, AbstractValidator<TModel> validator)
+    public void Deactivate()
     {
-      ValidationResult = validator.Validate(model);
-      return Valid = ValidationResult.IsValid;
+      IsActive = false;
     }
+
+    public void Activate()
+    {
+      IsActive = true;
+    }
+
+    protected bool ValidateFromSubClass<T>(T instance)
+    {
+      var validator = (AbstractValidator<T>)ValidatorProvider.GetValidator(this);
+      ValidationResult = validator.Validate(instance);
+      return IsValid = ValidationResult.IsValid;
+    }
+
+    /// <summary>
+    /// Must call super classe's Validate method
+    /// </summary>
+    public abstract void Validate();
   }
 }
