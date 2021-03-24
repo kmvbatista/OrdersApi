@@ -5,13 +5,14 @@ using NSubstitute;
 using Domain.DomainNotifications;
 using Application.Interfaces;
 using Application.Services;
-using Domain.Models.Customer;
 using Domain.Enums;
 using Domain.Entity;
 using Tests.Builders;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Models.CustomerModels;
+using Tests.Mocks;
 
 namespace Tests.ServicesTests
 {
@@ -25,7 +26,7 @@ namespace Tests.ServicesTests
     public CustomerServiceTests()
     {
       _customerRepository = Substitute.For<ICustomerRepository>();
-      _notificationService = Substitute.For<INotificationService>();
+      _notificationService = NotificationServiceMock.GetIt();
       _customerService = new CustomerService(_customerRepository, _notificationService);
     }
 
@@ -40,7 +41,23 @@ namespace Tests.ServicesTests
 
       //assert
       _customerRepository.Received(1)
-      .Create(Arg.Is<Customer>(c => c.Name == "Kennedy"
+      .Create(Arg.Is<Customer>(c => c.Name == customerRequestModel.Name
+                                    && c.Document.ToString() == customerRequestModel.Document
+                                    && c.Document.Type == customerRequestModel.DocumentType));
+    }
+
+    [Fact]
+    public void ShouldNotSaveNewCustomerWhenInvalid()
+    {
+      //arrange
+      var customerRequestModel = GetCustomerRequestModelExample();
+
+      //action
+      _customerService.Create(customerRequestModel);
+
+      //assert
+      _customerRepository.Received(1)
+      .Create(Arg.Is<Customer>(c => c.Name == customerRequestModel.Name
                                     && c.Document.ToString() == customerRequestModel.Document
                                     && c.Document.Type == customerRequestModel.DocumentType));
     }
@@ -49,9 +66,9 @@ namespace Tests.ServicesTests
     public async Task ShouldUpdateCustomer()
     {
       //arrange
-      var customerRequestModel = GetCustomerRequestModelExample();
+      var customerRequestModel = GetCustomerRequestModelWithCNPJExample();
       Customer customerToUpdate = new CustomerBuilder().WithName("Kennedy B")
-        .WithDocument(DocumentType.CPF, customerRequestModel.Document.ToString())
+        .WithDocument(customerRequestModel.DocumentType, customerRequestModel.Document.ToString())
         .WithId(customerRequestModel.Id).Construct();
       _customerRepository.GetById(customerRequestModel.Id).Returns(customerToUpdate);
 
@@ -63,6 +80,26 @@ namespace Tests.ServicesTests
       .Update(Arg.Is<Customer>(c => c.Document.ToString() == customerRequestModel.Document
                                     && c.IsActive == true
                                     && c.Name == customerRequestModel.Name));
+    }
+
+    [Fact]
+    public async Task ShouldNotUpdateCustomerWhenInvalid()
+    {
+      //arrange
+      var customerRequestModel = GetCustomerRequestModelWithCNPJExample();
+      customerRequestModel.Document = "54084345000105";
+
+      Customer customerToUpdate = new CustomerBuilder()
+        .WithDocument(customerRequestModel.DocumentType, customerRequestModel.Document.ToString())
+        .WithId(customerRequestModel.Id).Construct();
+      _customerRepository.GetById(customerRequestModel.Id).Returns(customerToUpdate);
+
+      //act
+      await _customerService.Update(customerRequestModel.Id, customerRequestModel);
+
+      //assert
+      await _customerRepository.Received(0)
+      .Update(Arg.Any<Customer>());
     }
 
     [Fact]
@@ -90,7 +127,7 @@ namespace Tests.ServicesTests
       var customerToReturn = new CustomerBuilder()
                       .WithId(customerId)
                       .WithName("Kennedy")
-                      .WithDocument(DocumentType.CPF, "14832124676")
+                      .WithDocument(DocumentType.CPF, "87468960070")
                       .Construct();
       _customerRepository.GetById(customerId).Returns(customerToReturn);
 
@@ -109,7 +146,7 @@ namespace Tests.ServicesTests
       _customerRepository.GetAll().Returns(customersToReturnFromRepo);
 
       //act
-      IList<CustomerResponseModel> foundCustomers = await _customerService.GetAll();
+      IList<CustomerResponseModel> foundCustomers = (await _customerService.GetAll()).ToList();
 
       //assert
       Assert.True(foundCustomers[0].Name == customersToReturnFromRepo[0].Name
@@ -120,7 +157,19 @@ namespace Tests.ServicesTests
     {
       var model = new CustomerRequestModel()
       {
-        Document = "14832124676",
+        Document = "24.288.623/0001-70",
+        DocumentType = DocumentType.CNPJ,
+        Name = "Kennedy Batista Enterprise",
+        Id = Guid.NewGuid()
+      };
+      return model;
+    }
+
+    private CustomerRequestModel GetCustomerRequestModelWithCNPJExample()
+    {
+      var model = new CustomerRequestModel()
+      {
+        Document = "87468960070",
         DocumentType = DocumentType.CPF,
         Name = "Kennedy Batista",
         Id = Guid.NewGuid()
@@ -130,8 +179,8 @@ namespace Tests.ServicesTests
 
     private List<Customer> GetCustomerListExample()
     {
-      var customer1 = new CustomerBuilder().WithName("João").WithDocument(DocumentType.CPF, "14832124676").Construct();
-      var customer2 = new CustomerBuilder().WithName("Kennedy").WithDocument(DocumentType.CPF, "14832124676").Constuct();
+      var customer1 = new CustomerBuilder().WithName("João").WithDocument(DocumentType.CPF, "87468960070").Construct();
+      var customer2 = new CustomerBuilder().WithName("Kennedy").WithDocument(DocumentType.CPF, "87468960070").Construct();
       return new List<Customer>() { customer1, customer2 };
     }
   }
