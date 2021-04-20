@@ -3,7 +3,7 @@ using Domain.RepositoryContracts;
 using Xunit;
 using NSubstitute;
 using Domain.DomainNotifications;
-using Application.Interfaces;
+using Application.ServicesContracts;
 using Application.Services;
 using Domain.Enums;
 using Domain.Entity;
@@ -34,7 +34,7 @@ namespace Tests.ServicesTests
     public void ShouldSaveNewCustomer()
     {
       //arrange
-      var customerRequestModel = GetCustomerRequestModelExample();
+      var customerRequestModel = GetCustomerRequestModelExampleWithCPF();
 
       //action
       _customerService.Create(customerRequestModel);
@@ -50,7 +50,7 @@ namespace Tests.ServicesTests
     public void ShouldNotSaveNewCustomerWhenInvalid()
     {
       //arrange
-      var customerRequestModel = GetCustomerRequestModelExample();
+      var customerRequestModel = GetCustomerRequestModelExampleWithCPF();
 
       //action
       _customerService.Create(customerRequestModel);
@@ -106,7 +106,7 @@ namespace Tests.ServicesTests
     public async Task ShouldDeactivateCustomer()
     {
       //arrange
-      var customerRequestModel = GetCustomerRequestModelExample();
+      var customerRequestModel = GetCustomerRequestModelExampleWithCPF();
       Customer customerToUpdate = new CustomerBuilder().WithName("Kennedy B")
         .WithDocument(DocumentType.CPF, customerRequestModel.Document.ToString())
         .WithId(customerRequestModel.Id).Construct();
@@ -153,7 +153,7 @@ namespace Tests.ServicesTests
                   && foundCustomers[0].Document == customersToReturnFromRepo[0].Document.ToString());
     }
 
-    private CustomerRequestModel GetCustomerRequestModelExample()
+    private CustomerRequestModel GetCustomerRequestModelWithCNPJExample()
     {
       var model = new CustomerRequestModel()
       {
@@ -165,7 +165,7 @@ namespace Tests.ServicesTests
       return model;
     }
 
-    private CustomerRequestModel GetCustomerRequestModelWithCNPJExample()
+    private CustomerRequestModel GetCustomerRequestModelExampleWithCPF()
     {
       var model = new CustomerRequestModel()
       {

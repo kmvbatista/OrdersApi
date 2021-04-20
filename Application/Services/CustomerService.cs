@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Application.Interfaces;
+using Application.ServicesContracts;
 using Domain.DomainNotifications;
 using Domain.Entity;
 using Domain.Models.CustomerMappers;

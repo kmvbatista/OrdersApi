@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Domain.Utils;
 using Domain.Models;
 
-namespace Application.Interfaces
+namespace Application.ServicesContracts
 {
   public interface IServiceCrud<TEntity, TRequestModel, TResponseModel>
                                       where TEntity : Domain.Entity.BaseEntity
